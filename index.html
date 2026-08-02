@@ -5,134 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surprise d'Anniversaire</title>
     <style>
-        body {
-            background-color: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-        }
+    /* Styles de base - pour centrer le tout */
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #eee;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
 
-        .container {
-            position: relative;
-        }
+    /* Conteneur de l'enveloppe */
+    .envelope-container {
+        position: relative;
+        width: 300px;
+        height: 200px;
+        cursor: pointer;
+    }
 
-        .instruction {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: bold;
-            transition: opacity 0.5s ease;
-            animation: bounce 1.5s infinite;
-        }
+    /* Rabat supérieur de l'enveloppe */
+    .flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-left: 150px solid transparent;
+        border-right: 150px solid transparent;
+        border-top: 100px solid #e2610b; /* Orange plus clair */
+        z-index: 3;
+        transform-origin: top;
+        transition: transform 0.6s ease;
+    }
 
-        .envelope-wrapper {
-            position: relative;
-            width: 300px;
-            height: 200px;
-            cursor: pointer;
-        }
+    /* Face avant de l'enveloppe (le bas orange) */
+    .envelope-face {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #d35400; /* Orange plus foncé */
+        z-index: 2;
+    }
 
-        /* L'enveloppe (fond) */
-        .envelope {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-color: #d35400; /* Intérieur sombre */
-            border-radius: 0 0 5px 5px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
+    /* --- LA LETTRE GEANTE (la carte blanche) --- */
+    .letter-card {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        /* --- CHANGEMENT MAJEUR ICI --- */
+        width: 800px; /* Plus de 3 fois plus large ! */
+        height: 600px; /* Plus de 3 fois plus haute ! */
+        background-color: #fff;
+        z-index: 1;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: transform 0.8s ease; /* Légèrement plus lent pour l'effet */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 30px; /* Plus d'espace */
+        box-sizing: border-box;
+    }
 
-        /* Le rabat du haut (qui s'ouvre) */
-        .flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            border-top: 110px solid #e67e22;
-            transform-origin: top;
-            transition: transform 0.5s ease-in-out, z-index 0s 0.2s;
-            z-index: 4;
-        }
+    /* Conteneur de la photo */
+    .photo-container {
+        width: 100%;
+        /* --- CHANGEMENT MAJEUR ICI --- */
+        height: 450px; /* Une hauteur énorme pour la photo */
+        margin-bottom: 25px; /* Espace avant le texte */
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        /* Le devant de l'enveloppe (poches latérales et bas) */
-        .pocket {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 150px solid #d35400;
-            border-right: 150px solid #d35400;
-            border-bottom: 100px solid #e67e22;
-            border-top: 100px solid transparent;
-            border-radius: 0 0 5px 5px;
-            z-index: 3;
-            pointer-events: none; /* Laisse le clic passer à l'enveloppe */
-        }
+    /* La photo elle-même */
+    .photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Fait tenir TOUTE l'image sans la couper */
+        object-position: center; /* Centre l'image */
+    }
 
-        /* La lettre (photo + texte) */
-        .letter {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            width: 290px;
-            height: 250px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.6s ease-in-out 0.3s; /* Délai pour laisser le rabat s'ouvrir */
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-            padding: 10px;
-        }
+    /* Le texte de la carte */
+    .letter-card p {
+        margin: 0;
+        text-align: center;
+        /* --- CHANGEMENT ICI --- */
+        font-size: 2rem; /* Texte beaucoup plus grand */
+        color: #333;
+        font-weight: bold;
+    }
 
-        /* Style de l'image dans la lettre */
-        .letter img {
-            width: 95%;
-            height: 180px;
-            object-fit: contain;
-            border-radius: 5px;
-            border: 2px solid #f0f4f8;
-        }
+    /* --- Animations --- */
 
-        /* Style du texte dans la lettre */
-        .letter p {
-            margin-top: 10px;
-            margin-bottom: 0;
-            font-size: 1.1rem;
-            color: #2c3e50;
-            font-weight: bold;
-            text-align: center;
-        }
+    /* Quand l'enveloppe est ouverte */
+    .envelope-container.open .flap {
+        transform: rotateX(180deg);
+        z-index: 1; /* Le rabat passe derrière la lettre */
+    }
 
-        /* --- Les animations déclenchées au clic --- */
-        .envelope-wrapper.open .flap {
-            transform: rotateX(180deg);
-            z-index: 1; /* Le rabat passe derrière la lettre une fois ouvert */
-        }
-
-       .envelope-wrapper.open .letter {
-           transform: translateY(-220px); /* La lettre sort complètement */
-           z-index: 5; /* S'assure qu'elle passe bien par-dessus l'enveloppe */
-       }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-    </style>
+    /* --- CHANGEMENT MAJEUR ICI POUR QUE LA LETTRE SORTE --- */
+    .envelope-container.open .letter-card {
+        /* On doit la faire sortir beaucoup plus loin à cause de sa taille */
+        transform: translateY(-620px); 
+    }
+</style>
 </head>
 <body>
 
